@@ -4,7 +4,7 @@
     <script src="wasm_exec.js"></script>
     <script>
       const go = new Go();
-      WebAssembly.instantiateStreaming(fetch("../assets/json.wasm"), go.importObject).then( wasm => {
+      WebAssembly.instantiateStreaming(fetch("json.wasm"), go.importObject).then( wasm => {
         go.run(wasm.instance);
       });
     </script>
