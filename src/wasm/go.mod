@@ -1,3 +1,3 @@
-module wasm-sandpiles
+module sandpiles
 
 go 1.18
