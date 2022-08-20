@@ -45,12 +45,13 @@ func initSandpilesWrapper() js.Func {
     fmt.Println("input pileSize %s\n", pileSize)
     fmt.Println("input initPile %s\n", initPile)
 
-    sandpiles, err := initSandpiles(pileSize, initPile)
-    if err != nil {
-      fmt.Printf("Unable to init sandpiles %s\n", err)
-      return err.Error()
-    }
-    return sandpiles
+    //sandpiles, err := initSandpiles(pileSize, initPile)
+    //if err != nil {
+    //  fmt.Printf("Unable to init sandpiles %s\n", err)
+    //  return err.Error()
+    //}
+    //return sandpiles
+    return 1
   })
 
   return initFunc
@@ -58,7 +59,7 @@ func initSandpilesWrapper() js.Func {
 
 func main() {
   fmt.Println("Sandpiles Functions loaded")
-  //js.Global().Set("initSandpiles", initSandpilesWrapper())
+  js.Global().Set("initSandpiles", initSandpilesWrapper())
   //js.Global().Set("updateSandpiles", updateSandpiles)
 
   <-make(chan bool)
