@@ -24,11 +24,11 @@ var done chan struct{}
 
 var height, width float64
 
-const SIZE int = 39
+const SIZE int = 49
 const COLOR_MULTIPLE int = 9
-const RED_VALUE int = 45
-const GREEN_VALUE int = 29
-const BLUE_VALUE int = 140
+const RED_VALUE int = 50
+const GREEN_VALUE int = 50
+const BLUE_VALUE int = 50
 
 var piles []int = make([]int, int(math.Pow(float64(SIZE), 2)))
 var sandpiles = Sandpiles{piles, SIZE, 1000000, 4, 8}
@@ -102,40 +102,47 @@ func InitSandpiles(s *Sandpiles) (bool, error) {
 }
 
 func Update(s *Sandpiles) {
+	dupe := make([]int, len(s.piles))
+	for i, p := range s.piles {
+		if p < s.toppleThreshold {
+			dupe[i] = p
+		}
+	}
 	for i, p := range s.piles {
 		if p >= s.toppleThreshold {
 			// init this pile
-			s.piles[i] -= s.toppleThreshold
+			dupe[i] += p - s.toppleThreshold
 
 			//update cardinal neighbors
 			if i%s.size < s.size-1 {
-				s.piles[i+1] += 1
+				dupe[i+1] += 1
 			}
-			if i+s.size < len(s.piles) {
-				s.piles[i+s.size] += 1
+			if i+s.size < len(dupe) {
+				dupe[i+s.size] += 1
 			}
 			if i%s.size > 0 {
-				s.piles[i-1] += 1
+				dupe[i-1] += 1
 			}
 			if i > s.size {
-				s.piles[i-s.size] += 1
+				dupe[i-s.size] += 1
 			}
 
 			//update diagonal neighbors
 			// FIXME: This is still a copy of the cardinal function
 			// Implement with multiples of 12 to give 2 to cardinal and 1 to diagonals
 			// if i%s.size < s.size-1 {
-			// 	s.piles[i+1] += int(math.Floor(float64(s.toppleThreshold) / 6))
+			// 	dupe[i+1] += int(math.Floor(float64(s.toppleThreshold) / 6))
 			// }
 			// if i%s.size > 0 {
-			// 	s.piles[i-1] += int(math.Floor(float64(s.toppleThreshold) / 6))
+			// 	dupe[i-1] += int(math.Floor(float64(s.toppleThreshold) / 6))
 			// }
 			// if i > s.size {
-			// 	s.piles[i-s.size] += int(math.Floor(float64(s.toppleThreshold) / 6))
+			// 	dupe[i-s.size] += int(math.Floor(float64(s.toppleThreshold) / 6))
 			// }
-			// if i+s.size < len(s.piles) {
-			// 	s.piles[i+s.size] += int(math.Floor(float64(s.toppleThreshold) / 6))
+			// if i+s.size < len(dupe) {
+			// 	dupe[i+s.size] += int(math.Floor(float64(s.toppleThreshold) / 6))
 			// }
 		}
 	}
+	s.piles = dupe
 }
