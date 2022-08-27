@@ -62,4 +62,7 @@ s.piles[row+1][col] += int(math.Floor(float64(s.toppleThreshold) / 4))
 It feels nice to get away from pure functions...but it gets messy
 LOL Go enforces trailing commas I love it. Take THAT JSON!
 Performance is not great on canvas...
-On to prerendering, sigh....
+On to prerendering, sigh....NO WE WILL PREVAIL!
+## Fully functioning!
+Web Canvas API is the bottleneck. There is mention of using goroutines to avoid this.
+Go can log like a champ. Logging in JS can really load up the event loop

@@ -13,17 +13,25 @@ import (
 )
 
 type Sandpiles struct {
-	piles            [][]float64
-	centerPileHeight float64
-	toppleThreshold  float64
+	piles            []int
+	size             int
+	centerPileHeight int
+	toppleThreshold  int
 	pixelSize        int
 }
 
 var done chan struct{}
 
 var height, width float64
-var size int = 51
-var sandpiles = Sandpiles{make([][]float64, size), 10000, 12, 6}
+
+const SIZE int = 39
+const COLOR_MULTIPLE int = 9
+const RED_VALUE int = 45
+const GREEN_VALUE int = 29
+const BLUE_VALUE int = 140
+
+var piles []int = make([]int, int(math.Pow(float64(SIZE), 2)))
+var sandpiles = Sandpiles{piles, SIZE, 1000000, 4, 8}
 var cvs *canvas.Canvas2d
 
 // This specifies how long a delay between calls to 'render'.     To get Frame Rate,   1s / renderDelay
@@ -35,8 +43,6 @@ func main() {
 		fmt.Println("Failed to initialize")
 	}
 
-	FrameRate := time.Second / renderDelay
-	println("FPS:", FrameRate)
 	//cvs, _ = canvas.NewCanvas2d(true)
 
 	cvs, _ = canvas.NewCanvas2d(false)
@@ -45,7 +51,7 @@ func main() {
 	height = float64(cvs.Height())
 	width = float64(cvs.Width())
 
-	cvs.Start(20, Render)
+	cvs.Start(30, Render)
 
 	//go doEvery(renderDelay, Render) // Kick off the Render function as go routine as it never returns
 	<-done
@@ -60,79 +66,76 @@ func doEvery(d time.Duration, f func(time.Time)) {
 
 // Called from the 'requestAnimationFrame' function.   It may also be called seperatly from a 'doEvery' function, if the user prefers drawing to be seperate from the animationFrame callback
 func Render(gc *draw2dimg.GraphicContext) bool {
-	UpdateSandpiles(&sandpiles)
+	Update(&sandpiles)
 
-	for row := range sandpiles.piles {
-		for col := range sandpiles.piles[row] {
-			p := sandpiles.piles
-			// fmt.Println(uint8(p[row][col] % 255))
-			// draws square if the value is high
-			gc.SetFillColor(color.RGBA{
-				0x22 + uint8(p[row][col] * 20), 
-				0x77 - uint8(p[row][col] * 20), 
-				0x22 + uint8(p[row][col] * 20), 
-				0xff,
-			})
-			gc.BeginPath()
-			draw2dkit.Rectangle(gc,
-				float64(row*sandpiles.pixelSize),
-				float64(col*sandpiles.pixelSize),
-				float64((row+1)*sandpiles.pixelSize),
-				float64((col+1)*sandpiles.pixelSize),
-			)
-			gc.FillStroke()
-			gc.Close()
+	for i, p := range sandpiles.piles {
+		// fmt.Println(uint8(p[row][col] % 255))
+		// draws square if the value is high
+		gc.SetFillColor(color.RGBA{
+			uint8(math.Min(float64(RED_VALUE+p*sandpiles.toppleThreshold*COLOR_MULTIPLE), 0xff)),
+			uint8(math.Min(float64(0x22+p*sandpiles.toppleThreshold*COLOR_MULTIPLE), 0xff)),
+			uint8(math.Min(float64(0x88+p*sandpiles.toppleThreshold*COLOR_MULTIPLE), 0xff)),
+			0xff,
+		})
+		gc.BeginPath()
 
-		}
+		// map the 1 dimensional slice of points to the 2d canvas
+		xPosition := i % sandpiles.size
+		yPosition := i / sandpiles.size
+		draw2dkit.Rectangle(gc,
+			float64(xPosition*sandpiles.pixelSize),
+			float64(yPosition*sandpiles.pixelSize),
+			float64(xPosition*sandpiles.pixelSize+sandpiles.pixelSize),
+			float64(yPosition*sandpiles.pixelSize+sandpiles.pixelSize),
+		)
+		gc.FillStroke()
+		gc.Close()
+
 	}
 
 	return true
 }
 
 func InitSandpiles(s *Sandpiles) (bool, error) {
-	for i := range s.piles {
-		s.piles[i] = make([]float64, len(s.piles))
-	}
-	s.piles[size/2][size/2] = s.centerPileHeight
-
+	s.piles[int(math.Floor(float64(len(s.piles))/2))] = s.centerPileHeight
 	return true, nil
 }
 
-func UpdateSandpiles(s *Sandpiles) {
-	for row := range s.piles {
-		for col := range s.piles[row] {
-			if s.piles[row][col] >= s.toppleThreshold {
-				// init this pile
-				s.piles[row][col] -= s.toppleThreshold
+func Update(s *Sandpiles) {
+	for i, p := range s.piles {
+		if p >= s.toppleThreshold {
+			// init this pile
+			s.piles[i] -= s.toppleThreshold
 
-				//update cardinal neighbors
-				if row < size-1 {
-					s.piles[row+1][col] += math.Floor(float64(s.toppleThreshold) / 6)
-				}
-				if row > 0 {
-					s.piles[row-1][col] += math.Floor(float64(s.toppleThreshold) / 6)
-				}
-				if col < size-1 {
-					s.piles[row][col+1] += math.Floor(float64(s.toppleThreshold) / 6)
-				}
-				if col > 0 {
-					s.piles[row][col-1] += math.Floor(float64(s.toppleThreshold) / 6)
-				}
-
-				//update diagonal neighbors
-				if row < size-1 && col > 0{
-					s.piles[row+1][col-1] += math.Floor(float64(s.toppleThreshold) / 12)
-				}
-				if row < size-1 && col < size-1 {
-					s.piles[row+1][col+1] += math.Floor(float64(s.toppleThreshold) / 12)
-				}
-				if row > 0 && col > 0 {
-					s.piles[row-1][col-1] += math.Floor(float64(s.toppleThreshold) / 12)
-				}
-				if row > 0 && col < size-1 {
-					s.piles[row-1][col+1] += math.Floor(float64(s.toppleThreshold) / 12)
-				}
+			//update cardinal neighbors
+			if i%s.size < s.size-1 {
+				s.piles[i+1] += 1
 			}
+			if i+s.size < len(s.piles) {
+				s.piles[i+s.size] += 1
+			}
+			if i%s.size > 0 {
+				s.piles[i-1] += 1
+			}
+			if i > s.size {
+				s.piles[i-s.size] += 1
+			}
+
+			//update diagonal neighbors
+			// FIXME: This is still a copy of the cardinal function
+			// Implement with multiples of 12 to give 2 to cardinal and 1 to diagonals
+			// if i%s.size < s.size-1 {
+			// 	s.piles[i+1] += int(math.Floor(float64(s.toppleThreshold) / 6))
+			// }
+			// if i%s.size > 0 {
+			// 	s.piles[i-1] += int(math.Floor(float64(s.toppleThreshold) / 6))
+			// }
+			// if i > s.size {
+			// 	s.piles[i-s.size] += int(math.Floor(float64(s.toppleThreshold) / 6))
+			// }
+			// if i+s.size < len(s.piles) {
+			// 	s.piles[i+s.size] += int(math.Floor(float64(s.toppleThreshold) / 6))
+			// }
 		}
 	}
 }
