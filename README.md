@@ -66,3 +66,4 @@ On to prerendering, sigh....NO WE WILL PREVAIL!
 ## Fully functioning!
 Web Canvas API is the bottleneck. There is mention of using goroutines to avoid this.
 Go can log like a champ. Logging in JS can really load up the event loop
+.Truthy() is js derpiness leaking in to Go interop
