@@ -12,9 +12,6 @@ M A G I C A L G L U E
 Not too hard, make sure GOOS = js and GOARCH = wasm
 ## 2nd step: Write in Go
 Go is fun, Go is fast.
-Go has slices which DO NOT EVER CALL THEM ARRAY!
-Don't even think the word 'array'.
-Okay easy pe....wait wtf is this?!
 ```
 func initSandpilesWrapper() js.Func {
 	initFunc := js.FuncOf(
