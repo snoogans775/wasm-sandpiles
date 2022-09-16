@@ -28,14 +28,22 @@
     }
 
     body * {
-      max-width: 850px;
+      max-width: 800px;
     }
 
     canvas {
       margin: 0 auto;
       filter: blur(1px);
     }
-
+    h1 {
+      max-width: 30ch;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+ 
     @keyframes spin {
       0% {
         filter: hue-rotate(180deg)
@@ -54,12 +62,14 @@
 
 <body>
   <h1>This canvas is being updated by the Go programming language</h1>
-  <label>Color Multiplier
-    <input id="color-multiple" type="range" min="-50" max="50" step="1" value="20" />
-  </label>
-  <label>Topple Threshold
-    <input id="topple-threshold" type="range" min="-8" max="8" step="1" value="1" />
-  </label>
+  <section id="ui">
+    <label>Color Multiplier
+      <input id="color-multiple" type="range" min="-50" max="50" step="1" value="20" />
+    </label>
+    <label>Topple Threshold
+      <input id="topple-threshold" type="range" min="-8" max="8" step="1" value="1" />
+    </label>
+  </section>
 </body>
 
 </html>
