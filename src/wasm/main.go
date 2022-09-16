@@ -8,7 +8,10 @@ import (
 	"strconv"
 	"syscall/js"
 
-        "github.com/schabby/go-wasm-webgl"
+	"github.com/llgcode/draw2d/draw2dimg"
+	"github.com/llgcode/draw2d/draw2dkit"
+	"github.com/markfarnan/go-canvas/canvas"
+
 )
 
 type Sandpiles struct {
@@ -29,12 +32,12 @@ type UI struct {
 var done chan struct{}
 
 var height, width float64
-var cvs *go-wasm-webgl.Canvas
+var cvs *canvas.Canvas2d
 
 const SIZE int = 61
 const CENTER_PILE_HEIGHT int = 1000000
 const TOPPLE_THRESHOLD int = 4
-const PIXEL_SIZE int = 4
+const PIXEL_SIZE int = 6
 const COLOR_MULTIPLE int = 8
 const TOPPLE_DECREMENTER = 8
 
