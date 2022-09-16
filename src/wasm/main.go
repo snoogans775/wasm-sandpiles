@@ -50,6 +50,10 @@ var sandpiles = Sandpiles{
 	PIXEL_SIZE,
 	COLOR_MULTIPLE,
 }
+var ui = UI{
+	20,
+	4,
+}
 
 func main() {
 	var _, err = InitSandpiles(&sandpiles)
@@ -76,7 +80,7 @@ func InitSandpiles(s *Sandpiles) (bool, error) {
 // Called from the 'requestAnimationFrame' function
 func Render(gc *draw2dimg.GraphicContext) bool {
 	var s Sandpiles = sandpiles
-	Update(&sandpiles)
+	Update(&sandpiles, &ui)
 
 	for i, p := range sandpiles.piles {
 		gc.SetFillColor(color.RGBA{
@@ -118,14 +122,8 @@ func Render(gc *draw2dimg.GraphicContext) bool {
 	return true
 }
 
-func Update(s *Sandpiles) {
-	// FIXME: Move to a global object
-	ui, err := ReadUI()
-	if err != nil {
-		fmt.Println("Failed to read UI")
-	}
-
-	// update mutable globals
+func Update(s *Sandpiles, ui *UI) {
+	// update mutable state
 	s.colorMultiple = ui.colorMultiple
 	s.toppleThreshold = ui.toppleThreshold
 
@@ -148,39 +146,45 @@ func Update(s *Sandpiles) {
 	// end the sandpiles algorithm
 }
 
-func ReadUI() (UI, error) {
+func ReadUI(ui *UI) error {
 	document := js.Global().Get("document")
 	if !document.Truthy() {
-		return UI{}, errors.New("Could not retrieve document")
+		return errors.New("Could not retrieve document")
 	}
 	// Color Multiplier
 	colorSlider := document.Call("getElementById", "color-multiple")
 	if !colorSlider.Truthy() {
-		return UI{}, errors.New("Could not retrieve color slider")
+		return errors.New("Could not retrieve color slider")
 	}
 	colorSliderValue, err := strconv.Atoi(colorSlider.Get("value").String())
 	if err != nil {
-		return UI{}, errors.New("Failed to parse slider value")
+		return errors.New("Failed to parse slider value")
 	}
 
 	// Topple Threshold
 	toppleSlider := document.Call("getElementById", "topple-threshold")
 	if !toppleSlider.Truthy() {
-		return UI{}, errors.New("Could not retrieve color slider")
+		return errors.New("Could not retrieve color slider")
 	}
 	toppleSliderValue, err := strconv.Atoi(toppleSlider.Get("value").String())
 	if err != nil {
-		return UI{}, errors.New("Failed to parse slider value")
+		return errors.New("Failed to parse slider value")
 	}
 
 	// Canvas
 	canvas := document.Call("getElementsByTagName", "canvas")
 	if !canvas.Truthy() {
-		return UI{}, errors.New("Could not retrieve canvas")
+		return errors.New("Could not retrieve canvas")
 	}
-	// get the coordinates of the click
+	// the
+	keydown := document.Call("addEventListener", "keypress")
+	if !keydown.Truthy() {
+		return "", errors.New("could not call addEventListener")
+	}
+
 	return UI{colorSliderValue, toppleSliderValue}, nil
 }
+
 
 func ToppleCardinal(dupe []int, s *Sandpiles, i int, p int) {
 	//update cardinal neighbors
