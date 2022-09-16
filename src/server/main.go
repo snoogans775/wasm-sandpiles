@@ -11,4 +11,5 @@ func main() {
     fmt.Println("Failed to start server", err)
     return
   }
+  fmt.Println("Go server running on port 9090")
 }
