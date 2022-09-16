@@ -8,9 +8,7 @@ import (
 	"strconv"
 	"syscall/js"
 
-	"github.com/llgcode/draw2d/draw2dimg"
-	"github.com/llgcode/draw2d/draw2dkit"
-	"github.com/markfarnan/go-canvas/canvas"
+        "github.com/schabby/go-wasm-webgl"
 )
 
 type Sandpiles struct {
@@ -31,7 +29,7 @@ type UI struct {
 var done chan struct{}
 
 var height, width float64
-var cvs *canvas.Canvas2d
+var cvs *go-wasm-webgl.Canvas
 
 const SIZE int = 61
 const CENTER_PILE_HEIGHT int = 1000000
@@ -83,6 +81,7 @@ func Render(gc *draw2dimg.GraphicContext) bool {
 	Update(&sandpiles, &ui)
 
 	var s *Sandpiles = &sandpiles
+
 	for i, p := range s.piles {
 		gc.SetFillColor(color.RGBA{
 			uint8(0xdd + p*s.colorMultiple),
