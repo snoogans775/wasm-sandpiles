@@ -33,10 +33,10 @@ var done chan struct{}
 var height, width float64
 var cvs *canvas.Canvas2d
 
-const SIZE int = 41
+const SIZE int = 61
 const CENTER_PILE_HEIGHT int = 1000000
 const TOPPLE_THRESHOLD int = 4
-const PIXEL_SIZE int = 8
+const PIXEL_SIZE int = 4
 const COLOR_MULTIPLE int = 8
 const TOPPLE_DECREMENTER = 8
 
@@ -51,8 +51,8 @@ var sandpiles = Sandpiles{
 	COLOR_MULTIPLE,
 }
 var ui = UI{
-	20,
-	4,
+	COLOR_MULTIPLE,
+	TOPPLE_THRESHOLD,
 }
 
 func main() {
@@ -79,10 +79,11 @@ func InitSandpiles(s *Sandpiles) (bool, error) {
 
 // Called from the 'requestAnimationFrame' function
 func Render(gc *draw2dimg.GraphicContext) bool {
-	var s Sandpiles = sandpiles
+	UpdateUI(&ui)
 	Update(&sandpiles, &ui)
 
-	for i, p := range sandpiles.piles {
+	var s *Sandpiles = &sandpiles
+	for i, p := range s.piles {
 		gc.SetFillColor(color.RGBA{
 			uint8(0xdd + p*s.colorMultiple),
 			uint8(0xbb + p*s.colorMultiple),
@@ -146,7 +147,7 @@ func Update(s *Sandpiles, ui *UI) {
 	// end the sandpiles algorithm
 }
 
-func ReadUI(ui *UI) error {
+func UpdateUI(ui *UI) error {
 	document := js.Global().Get("document")
 	if !document.Truthy() {
 		return errors.New("Could not retrieve document")
@@ -171,18 +172,10 @@ func ReadUI(ui *UI) error {
 		return errors.New("Failed to parse slider value")
 	}
 
-	// Canvas
-	canvas := document.Call("getElementsByTagName", "canvas")
-	if !canvas.Truthy() {
-		return errors.New("Could not retrieve canvas")
-	}
-	// the
-	keydown := document.Call("addEventListener", "keypress")
-	if !keydown.Truthy() {
-		return "", errors.New("could not call addEventListener")
-	}
+	ui.colorMultiple   = colorSliderValue
+	ui.toppleThreshold = toppleSliderValue
 
-	return UI{colorSliderValue, toppleSliderValue}, nil
+	return nil
 }
 
 

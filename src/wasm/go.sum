@@ -10,5 +10,7 @@ github.com/llgcode/ps v0.0.0-20150911083025-f1443b32eedb h1:61ndUreYSlWFeCY44JxD
 github.com/llgcode/ps v0.0.0-20150911083025-f1443b32eedb/go.mod h1:1l8ky+Ew27CMX29uG+a2hNOKpeNYEQjjtiALiBlFQbY=
 github.com/markfarnan/go-canvas v0.0.0-20200722235510-6971ccd00770 h1:7t1KxXXIIysYDk1ymAB3NeCRdp8WnV5+JqgSwAm6deg=
 github.com/markfarnan/go-canvas v0.0.0-20200722235510-6971ccd00770/go.mod h1:PqPh9d/lLHBot/ZoW4ZbZaRVLdBIHJZfPYLaC84RSI8=
+github.com/schabby/go-wasm-webgl v0.0.0-20210220125738-2c98b5386dd4 h1:oNfKzRw8AKJ9U3cwNjTd5z9LlJjIqvw/4tlMYdMvi/k=
+github.com/schabby/go-wasm-webgl v0.0.0-20210220125738-2c98b5386dd4/go.mod h1:tBWP7ZE7I1Dc1VM2wSwXRuycg6EhbQ4LgHt6UzeJrK4=
 golang.org/x/image v0.0.0-20180708004352-c73c2afc3b81 h1:00VmoueYNlNz/aHIilyyQz/MHSqGoWJzpFv/HW8xpzI=
 golang.org/x/image v0.0.0-20180708004352-c73c2afc3b81/go.mod h1:ux5Hcp/YLpHSI86hEcLt0YII63i6oz57MZXIpbrjZUs=

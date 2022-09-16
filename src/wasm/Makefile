@@ -1,2 +1,5 @@
+GOOS = js
+GOARCH = wasm
+export
 build:
-GOOS=js GOARCH=wasm go build -o  ../../assets/sandpiles.wasm
+	go build -o  ../../assets/sandpiles.wasm
