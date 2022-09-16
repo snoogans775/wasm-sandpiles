@@ -12,9 +12,6 @@ M A G I C A L G L U E
 Not too hard, make sure GOOS = js and GOARCH = wasm
 ## 2nd step: Write in Go
 Go is fun, Go is fast.
-Go has slices which DO NOT EVER CALL THEM ARRAY!
-Don't even think the word 'array'.
-Okay easy pe....wait wtf is this?!
 ```
 func initSandpilesWrapper() js.Func {
 	initFunc := js.FuncOf(
@@ -34,7 +31,7 @@ The break down:
 - we would like to have the global 'this' and local 'args' please
 
 ## Issues
-### I CAN HAZ SLICE?
+### Return types on Go js.FuncOf()
 Not all Go data structures can be returned via the interface{} return type in js.FuncOf()
 For example:
 - No multidimensional slices
@@ -51,18 +48,12 @@ Does this operation really merit the word 'Magic'?
 Okay I can just loop and load an array, but not dynamically, we'll try the magic thing later.
 Only nerds use []byte, I'm sticking with []int
 ## Time for dependencies!
-Okay I give up this sucks GO - JS interop is the pits.
 I am going to try @markfarnan/go-canvas
-YES!
-Oh god I should have used float64 
 **behold the monstrosity of typecasting**
 ```
 s.piles[row+1][col] += int(math.Floor(float64(s.toppleThreshold) / 4))
 ```
-It feels nice to get away from pure functions...but it gets messy
-LOL Go enforces trailing commas I love it. Take THAT JSON!
 Performance is not great on canvas...
-On to prerendering, sigh....NO WE WILL PREVAIL!
 ## Fully functioning!
 Web Canvas API is the bottleneck. There is mention of using goroutines to avoid this.
 Go can log like a champ. Logging in JS can really load up the event loop
